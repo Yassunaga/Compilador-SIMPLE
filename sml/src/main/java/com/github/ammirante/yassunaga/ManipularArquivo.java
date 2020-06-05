@@ -20,7 +20,7 @@ public class ManipularArquivo {
     private Map<Integer, String> textoArquivo = new HashMap<Integer, String>();
     private PrintWriter gravarArq;
     private FileWriter arquivo;
-
+    private Integer index = 0;
     /**
      * Construtor da classe.
      * 
@@ -79,6 +79,7 @@ public class ManipularArquivo {
         while (br.ready()) {
             String linha = br.readLine();
             textoArquivo.put(contadorLinha, linha);
+            contadorLinha++;
         }
 
         try {
@@ -92,9 +93,6 @@ public class ManipularArquivo {
      * Método responsável por retornar a linha que está no topo do arquivo.
      */
     public String getLinha() {
-        String linha = textoArquivo.get(0);
-        textoArquivo.remove(0);
-
-        return linha;
+        return textoArquivo.remove(this.index++);
     }
 }

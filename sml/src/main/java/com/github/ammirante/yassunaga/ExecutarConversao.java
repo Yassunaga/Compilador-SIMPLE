@@ -1,58 +1,51 @@
 package com.github.ammirante.yassunaga;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 
- * Gabriel Bueno Yassunaga - 1912130023
+ * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 Gabriel Bueno
+ * Yassunaga - 1912130023
  * 
  * Classe responsável por executar o código
  */
 public class ExecutarConversao {
-    public static void main(String[] args) throws Exception {
-        String SIMPLE_INPUT = "/home/paulin...";
-        String SIMPLE_OUTPUT = "/home/paulin...";
+    public static void main(String[] args) throws Exception, IOException {
+        String SIMPLE_INPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\entrada.txt";
+        String SIMPLE_OUTPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\saida.txt";
 
-        System.out.println(ExtrairArgumento.extrairOperacao("10 rem dasdasdsada"));
-        ManipularArquivo manipulador = new ManipularArquivo(SIMPLE_INPUT, SIMPLE_OUTPUT);        
+        ManipularArquivo manipulador = new ManipularArquivo(SIMPLE_INPUT, SIMPLE_OUTPUT);
         Transcrever transcrever = new Transcrever();
 
         String linha = null;
         String operacao = null;
-        String expressao = null;
-        String instrucao = null;
+        String expressao[] = null;
 
-        while(true){
+        while (!"end".equals(operacao)) {
             linha = manipulador.getLinha();
             operacao = ExtrairArgumento.extrairOperacao(linha);
             expressao = ExtrairArgumento.extrairExpressao(linha);
 
-            switch(operacao){
+            switch (operacao) {
                 case "rem":
                     break;
                 case "input":
-                    manipulador.escreverNoArquivo(executor.funcInput(expressao)); 
+                    manipulador.escreverNoArquivo(transcrever.funcInput(expressao[1]));
                     break;
-                case "let":
-                    manipulador.escreverNoArquivo(executor.funcLet(expressao));
+                case "end": 
+                    // manipulador.escreverNoArquivo(transcrever.funcEnd(expressao)); 
                     break;
-                case "print":
-                    manipulador.escreverNoArquivo(executor.funcPrint(expressao));
-                    break;
-                case "goto":
-                    manipulador.escreverNoArquivo(executor.funcGoto(expressao));
-                    break;
-                case "if/goto":
-                    manipulador.escreverNoArquivo(executor.funcIfgoto(expressao));
-                    break;
-                case "end":
-                    manipulador.escreverNoArquivo(executor.funcEnd(expressao));
-                    break;
+                /*
+                 * case "let": manipulador.escreverNoArquivo(transcrever.funcLet(expressao));
+                 * break; case "print":
+                 * manipulador.escreverNoArquivo(transcrever.funcPrint(expressao)); break; case
+                 * "goto": manipulador.escreverNoArquivo(transcrever.funcGoto(expressao));
+                 * break; case "if/goto":
+                 * manipulador.escreverNoArquivo(transcrever.funcIfgoto(expressao)); break; 
+                 */
+                
             }
         }
-        
+
         manipulador.fecharArquivo();
     }
 }
