@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +52,16 @@ public class ManipularArquivo {
      */
     public void escreverNoArquivo(String linha) {
         gravarArq.println(linha);
+    }
+
+    /**
+     * Método responsável por appendar uma lista no arquivo.
+     * @param lstLinhas
+     */
+    public void escrevarNoArquivo(List<String> lstLinhas) {
+        for(String linha : lstLinhas) {
+            gravarArq.println(linha);
+        }
     }
 
     /**

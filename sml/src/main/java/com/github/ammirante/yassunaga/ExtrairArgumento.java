@@ -28,6 +28,55 @@ public class ExtrairArgumento {
      */
     public static String[] extrairExpressao(String linha){
         String array[] = linha.split(" ");
+        
         return Arrays.copyOfRange(array, 1, array.length);
     }
+
+    /**
+     * Método responsável por extrair o número da linha. Exemplo: 10 input x -> Irá retornar 10.
+     * @param linha
+     * @return
+     */
+    public static Integer extrairNumeroLinha(String linha){
+        String array[] = linha.split(" ");
+        
+        return Integer.parseInt(array[0]);
+    }
+
+    /**
+     * Método responsável por extrair o operador relacional. Exemplo: 10 if i == z goto 98 -> Irá retornar ==.
+     * @param linha
+     * @return
+     */
+    public static String extrairOperadorRelacional(String linha) {
+        String array[] = linha.split(" ");
+        
+        return array[3];
+    }
+
+    /**
+     * Método responsável por extrair as variáveis do relacional. Exemplo 10 if i == z goto 98 -> Irá retornar [i, z].
+     * @param linha
+     * @return
+     */
+    public static String[] extrairVariaveisRelacional(String linha) {
+        String array[] = linha.split(" ");
+        String arrayTemp[] = new String[2];
+        arrayTemp[0] = array[2];
+        arrayTemp[1] = array[4];
+
+        return arrayTemp;
+    }
+
+    /**
+     * Método responsável por extrair a linha do relaciona. Exemplo 10 if i == z goto 98 -> Irá retornar 98. 
+     * @param linha
+     * @return
+     */
+    public static Integer extrairNumeroLinhaGoto(String linha) {
+        String array[] = linha.split(" ");
+
+        return Integer.valueOf(array[6]);
+    }
+
 }

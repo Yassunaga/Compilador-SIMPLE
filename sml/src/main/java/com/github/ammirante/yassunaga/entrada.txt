@@ -1,2 +1,15 @@
-10 input c
-55 end
+10 input a
+20 input b
+30 if a == b goto 20
+40 print a
+50 print b
+60 end
+
+acc = 10 / 11-10 = 1
+READ a = 10
+READ b = 11
+LOAD a
+SUBTRACT b 
+BRANCHNEG 20
+LOAD b
+SUBTRACT a

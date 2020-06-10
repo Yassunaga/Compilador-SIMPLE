@@ -18,23 +18,34 @@ public class ExecutarConversao {
 
         String linha = null;
         String operacao = null;
-        String expressao[] = null;
+        String expressao[];
+        Integer numeroLinha;
 
         while (!"end".equals(operacao)) {
             linha = manipulador.getLinha();
             operacao = ExtrairArgumento.extrairOperacao(linha);
             expressao = ExtrairArgumento.extrairExpressao(linha);
+            numeroLinha = ExtrairArgumento.extrairNumeroLinha(linha);
 
             switch (operacao) {
                 case "rem":
                     break;
                 case "input":
-                    manipulador.escreverNoArquivo(transcrever.funcInput(expressao[1]));
+                    manipulador.escreverNoArquivo(transcrever.funcInput(expressao[1], numeroLinha));
+                    break;
+                case "print":
+                    manipulador.escreverNoArquivo(transcrever.funcPrint(expressao[1], numeroLinha));
                     break;
                 case "end": 
-                    // manipulador.escreverNoArquivo(transcrever.funcEnd(expressao)); 
+                    manipulador.escreverNoArquivo(transcrever.funcEnd()); 
                     break;
-                /*
+                case "goto":
+                    manipulador.escreverNoArquivo(transcrever.funcGoto(expressao[1], numeroLinha));
+                    break;
+                case "if":
+                    manipulador.escrevarNoArquivo(transcrever.funcIfgoto(ExtrairArgumento.extrairVariaveisRelacional(linha), ExtrairArgumento.extrairOperadorRelacional(linha), ExtrairArgumento.extrairNumeroLinhaGoto(linha))); 
+                    break;
+                    /*vc
                  * case "let": manipulador.escreverNoArquivo(transcrever.funcLet(expressao));
                  * break; case "print":
                  * manipulador.escreverNoArquivo(transcrever.funcPrint(expressao)); break; case
