@@ -79,4 +79,31 @@ public class ExtrairArgumento {
         return Integer.valueOf(array[6]);
     }
 
+    /**
+     * Método responsável por extrair o operador. Exemplo 10 let a = b - c -> Irá retornar -.
+     * @param linha
+     * @return
+     */
+    public static String extrairOperador(String linha) {
+        String array[] = linha.split(" ");
+
+        return array[5];
+    }
+
+    /**
+     * Método responsável por extrair as variáveis do operador. Exemplo 10 let a = b - c -> Irá retornar [a, b, c].
+     * @param linha
+     * @return
+     */
+    public static String[] extrairVariaveisOperador(String linha) {
+        String array[] = linha.split(" ");
+        String arrayTemp[] = new String[3];
+        arrayTemp[0] = array[2];
+        arrayTemp[1] = array[4];
+        if(array.length > 5) {
+            arrayTemp[2] = array[6];
+        }
+
+        return arrayTemp;
+    }
 }

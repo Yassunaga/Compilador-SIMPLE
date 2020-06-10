@@ -37,26 +37,20 @@ public class ExecutarConversao {
                     manipulador.escreverNoArquivo(transcrever.funcPrint(expressao[1], numeroLinha));
                     break;
                 case "end": 
-                    manipulador.escreverNoArquivo(transcrever.funcEnd()); 
+                    manipulador.escreverNoArquivo(transcrever.funcEnd(numeroLinha)); 
                     break;
                 case "goto":
                     manipulador.escreverNoArquivo(transcrever.funcGoto(expressao[1], numeroLinha));
                     break;
                 case "if":
-                    manipulador.escrevarNoArquivo(transcrever.funcIfgoto(ExtrairArgumento.extrairVariaveisRelacional(linha), ExtrairArgumento.extrairOperadorRelacional(linha), ExtrairArgumento.extrairNumeroLinhaGoto(linha))); 
+                    manipulador.escreverNoArquivo(transcrever.funcIfgoto(ExtrairArgumento.extrairVariaveisRelacional(linha), ExtrairArgumento.extrairOperadorRelacional(linha), ExtrairArgumento.extrairNumeroLinhaGoto(linha), numeroLinha)); 
                     break;
-                    /*vc
-                 * case "let": manipulador.escreverNoArquivo(transcrever.funcLet(expressao));
-                 * break; case "print":
-                 * manipulador.escreverNoArquivo(transcrever.funcPrint(expressao)); break; case
-                 * "goto": manipulador.escreverNoArquivo(transcrever.funcGoto(expressao));
-                 * break; case "if/goto":
-                 * manipulador.escreverNoArquivo(transcrever.funcIfgoto(expressao)); break; 
-                 */
-                
+                case "let":
+                    manipulador.escreverNoArquivo(transcrever.funcLet(ExtrairArgumento.extrairVariaveisOperador(linha), ExtrairArgumento.extrairOperacao(linha), numeroLinha)); 
+                    break;
             }
         }
-
         manipulador.fecharArquivo();
+        manipulador.substituirValoresNulos(transcrever.getMapaOcorrenciaFaltantes(), transcrever.getMapaGoto(), SIMPLE_OUTPUT);
     }
 }
