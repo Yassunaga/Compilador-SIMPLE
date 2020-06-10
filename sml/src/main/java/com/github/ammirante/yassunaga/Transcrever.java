@@ -59,10 +59,10 @@ public class Transcrever {
         inserirSeNaoHouverEndereco(variaveis);
         mapaGoto.put(numeroLinha, indexLinha);
         this.indexLinha = incrementarEndereco(indexLinha);
-        if(variaveis.length >= 2){
+        if(variaveis.length > 2){
             return let3Variaveis(variaveis, operador, numeroLinha);
         }         
-        return let2Variaveis(variaveis, operador, numeroLinha);
+        return let2Variaveis(variaveis, numeroLinha);
     }
 
     /**
@@ -277,24 +277,17 @@ public class Transcrever {
     /**
      * Método responsável por realizar a conversão do código SIMPLE (atribuição) para SML. Exemplo: let a = b.
      * @param variaveis
-     * @param operador
      * @param numeroLinha
      * @return
      */
-    private List<String> let2Variaveis(String[] variaveis, String operador, Integer numeroLinha){
+    private List<String> let2Variaveis(String[] variaveis, Integer numeroLinha){
         String variavelA = mapaEnderecos.get(variaveis[0]);
         String variavelB = mapaEnderecos.get(variaveis[1]);
         this.mapaGoto.put(numeroLinha, indexLinha);
         this.indexLinha = incrementarEndereco(indexLinha);
         List<String> lstLinhas = new ArrayList<>(2);
-        switch(operador){
-            case "=":
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
-                break;
-            default:
-                break;
-        }
+        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
+        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
 
         return lstLinhas;
     }

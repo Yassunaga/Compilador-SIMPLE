@@ -87,7 +87,11 @@ public class ExtrairArgumento {
     public static String extrairOperador(String linha) {
         String array[] = linha.split(" ");
 
-        return array[5];
+        if(array.length > 5) {
+        	return array[5];
+        }
+        
+        return null;
     }
 
     /**
@@ -101,9 +105,9 @@ public class ExtrairArgumento {
         arrayTemp[0] = array[2];
         arrayTemp[1] = array[4];
         if(array.length > 5) {
-            arrayTemp[2] = array[6];
+        	return new String[]{array[2], array[4], array[6]};
         }
 
-        return arrayTemp;
+        return new String[]{array[2], array[4]};
     }
 }

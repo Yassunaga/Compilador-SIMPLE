@@ -25,6 +25,9 @@ public class ManipularArquivo {
     private PrintWriter gravarArq;
     private FileWriter arquivo;
     private Integer index = 0;
+    private String linhaArquivo = "00";
+    private Map<Integer, String> mapaOcorrencias = new HashMap<>();
+    
     /**
      * Construtor da classe.
      * 
@@ -52,18 +55,24 @@ public class ManipularArquivo {
     /**
      * Método responsável por appendar no arquivo.
      * @param linha
+     * @param numeroLinha
      */
-    public void escreverNoArquivo(String linha) {
+    public void escreverNoArquivo(String linha, Integer numeroLinha) {
         gravarArq.println(linha);
+        this.mapaOcorrencias.put(numeroLinha, this.linhaArquivo);
+        incrementarEndereco();
     }
 
     /**
      * Método responsável por appendar uma lista no arquivo.
      * @param lstLinhas
+     * @param numeroLinha
      */
-    public void escreverNoArquivo(List<String> lstLinhas) {
+    public void escreverNoArquivo(List<String> lstLinhas, Integer numeroLinha) {
+    	this.mapaOcorrencias.put(numeroLinha, this.linhaArquivo);
         for(String linha : lstLinhas) {
             gravarArq.println(linha);
+            incrementarEndereco();
         }
     }
 
@@ -118,18 +127,32 @@ public class ManipularArquivo {
      * @param mapaGoto
      * @throws IOException
      */
-    public void substituirValoresNulos(Map<String, Integer> mapaOcorrenciasFaltantes, Map<Integer, String> mapaGoto, String caminho) throws IOException {
+    public void substituirValoresNulos(Map<String, Integer> mapaOcorrenciasFaltantes, String caminho) throws IOException {
         for(Map.Entry<String, Integer> mapa : mapaOcorrenciasFaltantes.entrySet()) {
-            for(Map.Entry<Integer, String> mapa2 : mapaGoto.entrySet()) {
+            for(Map.Entry<Integer, String> mapa2 : mapaOcorrencias.entrySet()) {
                 if(mapa2.getKey() == mapa.getValue()) {
                     try (Stream<String> all_lines = Files.lines(Paths.get(caminho))) {
-                        String linha = all_lines.skip(Integer.valueOf(mapa.getKey())).findFirst().get();
+                        String linha = all_lines.skip(Integer.valueOf(mapa2.getValue())).findFirst().get();
                         linha.split(" ");
                     }
-                    /*arquivo.OpenLine(mapa.getKey())
-                    null removo e coloco mapa2.getValue();*/
                 }
             }
         }
+    }
+    
+    /**
+     * Método responsável por incrementar o index do endereço.
+     * @param idx
+     * @return
+     */
+    private void incrementarEndereco() {
+        Integer aux = Integer.parseInt(this.linhaArquivo);
+        aux++;
+        if(aux < 10) {
+            String cont = "0" + aux;
+            this.linhaArquivo = cont;
+        } else {
+        	this.linhaArquivo = aux.toString();
+        }       
     }
 }

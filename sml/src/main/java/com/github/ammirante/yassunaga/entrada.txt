@@ -1,4 +1,5 @@
 10 input n
-15 if n <= 0 goto 55
-55 let a = -1
+15 if n <= 0 goto 56
+55 let n = -1
+56 print n
 65 end
