@@ -2,6 +2,7 @@ package com.github.ammirante.yassunaga;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 
@@ -11,8 +12,8 @@ import java.util.List;
  */
 public class Transcrever {
 
-    private String indexLinhaSML = "00";
-    private String indexVariaveis = "99";
+    private Integer indexLinhaSML = 0;
+    private Integer indexVariaveis = 99;
     private static final String OPERACAO_SOMA = "+";
     private Mapas mapas;
 
@@ -21,7 +22,8 @@ public class Transcrever {
      */
     public Transcrever(Mapas mapas){
         this.mapas = mapas;
-        this.indexVariaveis = mapas.mapaVariavelToEnderecoSML.values().stream().sorted().findFirst().orElse(null);
+        Map.Entry<String, Integer> mapaVariavel = UtilSML.sortByValue(mapas.mapaVariavelToEnderecoSML).entrySet().stream().findFirst().orElse(null);
+        mapaVariavel.getValue();
      } 
 
     /**
@@ -39,13 +41,14 @@ public class Transcrever {
      * @return
      */
     public String funcInput(String variavel, Integer numLinhaSimple) {
-        String indexEnderecoLocal = indexVariaveis;
+        Integer indexEnderecoLocal = indexVariaveis;
         if(!isContemEndereco(variavel)){
             preencherMapaEnderecos(variavel, numLinhaSimple);
         } else{
             indexEnderecoLocal = this.mapas.mapaVariavelToEnderecoSML.get(variavel);
         }
-        
+        this.indexLinhaSML++;
+
         String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.READ.getCodigoSML(), indexEnderecoLocal);
 
         return linhaSML;
@@ -60,7 +63,7 @@ public class Transcrever {
     public List<String> funcLet(String[] variaveis, String operador, Integer numLinhaSimple){
         inserirSeNaoHouverEndereco(variaveis);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
+        this.indexLinhaSML++;
         if(variaveis.length > 2){
             return let3Variaveis(variaveis, operador, numLinhaSimple);
         }         
@@ -73,11 +76,11 @@ public class Transcrever {
      * @param linha
      * @return
      */
-    public String funcPrint(String expressao, Integer numLinhaSimple){
-        inserirSeNaoHouverEndereco(new String[]{expressao});
-        String indexEnderecoLocal =  this.mapas.mapaVariavelToEnderecoSML.get(expressao);
+    public String funcPrint(String variavel, Integer numLinhaSimple){
+        inserirSeNaoHouverEndereco(new String[]{variavel});
+        Integer indexEnderecoLocal =  this.mapas.mapaVariavelToEnderecoSML.get(variavel);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML = incrementarEndereco(this.indexLinhaSML);
+        this.indexLinhaSML++;
 
         String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.WRITE.getCodigoSML(), indexEnderecoLocal);
 
@@ -92,12 +95,12 @@ public class Transcrever {
      */
     public String funcGoto(String expressao, Integer numLinhaSimple){
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexVariaveis = decrementarEndereco(this.indexVariaveis);
-        String linhaGoto = this.mapas.mapaGotoLinhaSimpleLinhaSML.get(Integer.valueOf(expressao));
+        this.indexVariaveis--;
+        Integer linhaGoto = this.mapas.mapaGotoLinhaSimpleLinhaSML.get(Integer.valueOf(expressao));
         if(linhaGoto == null) {
             this.mapas.mapaOcorrenciasFaltantes.put(indexLinhaSML, Integer.valueOf(expressao));
         }
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
+        this.indexLinhaSML++;
         String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCH.getCodigoSML(), linhaGoto);
 
         return linhaSML;
@@ -112,14 +115,14 @@ public class Transcrever {
      */
     public List<String> funcIfgoto(String[] variaveis, String operador, Integer linhaGoto, Integer numLinhaSimple){
         inserirSeNaoHouverEndereco(variaveis);
-        String enderecoVariavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
-        String enderecoVariavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
+        Integer enderecoVariavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
+        Integer enderecoVariavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        String linha = this.mapas.mapaGotoLinhaSimpleLinhaSML.get(linhaGoto);
+        Integer linha = this.mapas.mapaGotoLinhaSimpleLinhaSML.get(linhaGoto);
         if(linha == null) {
             this.mapas.mapaOcorrenciasFaltantes.put(indexLinhaSML, linhaGoto);
         }
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
+        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(6);
         switch(operador){
             case ">":
@@ -169,38 +172,9 @@ public class Transcrever {
      */
     public String funcEnd(Integer numLinhaSimple){
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
-        return this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.HALT.getCodigoSML(), "00");
+        this.indexLinhaSML++;
+        return this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.HALT.getCodigoSML(), 0);
     }
-
-    /**
-     * Método responsável por incrementar o index do endereço.
-     * @param idx
-     * @return
-     */
-    private String incrementarEndereco(String idx){
-        Integer aux = Integer.parseInt(idx);
-        aux++;
-        if(aux < 10) {
-            String cont = "0" + aux;
-            idx = cont;
-        } else {
-            idx = aux.toString();
-        }
-        return idx;
-    }
-
-    /**
-     * Método responsável decrementar o index da variável.
-     * @param idx
-     * @return
-     */
-    private String decrementarEndereco(String idx){
-      Integer aux = Integer.parseInt(idx);
-      aux--;
-      idx = aux.toString();
-      return idx;
-    } 
 
     /**
      * Método responsável por criar a linha do código SML.
@@ -209,8 +183,14 @@ public class Transcrever {
      * @param endereco
      * @return
      */
-    private String montarLinhaSML(String tipoOperacao, Integer codigoOperacao, String endereco) {
-        return tipoOperacao + codigoOperacao + endereco;
+    private String montarLinhaSML(String tipoOperacao, Integer codigoOperacao, Integer endereco) {
+        String enderecoTemp;
+        if(endereco == null) {
+            enderecoTemp = "null";
+        } else {
+            enderecoTemp = UtilSML.montarIndice(endereco);
+        }
+        return tipoOperacao + codigoOperacao + enderecoTemp;
     }
 
     /**
@@ -230,7 +210,7 @@ public class Transcrever {
         for(int i=0; i<variaveis.length; i++){
             if(!isContemEndereco(variaveis[i])){
                 this.mapas.mapaVariavelToEnderecoSML.put(variaveis[i], indexVariaveis);
-                this.indexVariaveis = decrementarEndereco(indexVariaveis);
+                this.indexVariaveis--;
             }
         }
     }
@@ -243,11 +223,11 @@ public class Transcrever {
      * @return
      */
     private List<String> let3Variaveis(String[] variaveis, String operador, Integer numLinhaSimple) {
-        String variavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
-        String variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
-        String variavelC = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[2]);
+        Integer variavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
+        Integer variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
+        Integer variavelC = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[2]);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
+        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(3);
         switch(operador){
             case "-":
@@ -282,10 +262,10 @@ public class Transcrever {
      * @return
      */
     private List<String> let2Variaveis(String[] variaveis, Integer numLinhaSimple){
-        String variavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
-        String variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
+        Integer variavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
+        Integer variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML = incrementarEndereco(indexLinhaSML);
+        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(2);
         lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
         lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
@@ -301,8 +281,8 @@ public class Transcrever {
     private void preencherMapaEnderecos(String expressao, Integer linha) {
         this.mapas.mapaVariavelToEnderecoSML.put(expressao, indexVariaveis);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(linha, indexLinhaSML);
-        this.indexVariaveis = decrementarEndereco(this.indexVariaveis);
-        this.indexLinhaSML = incrementarEndereco(this.indexLinhaSML);
+        this.indexVariaveis--;
+        this.indexLinhaSML++;
     }
 
 }

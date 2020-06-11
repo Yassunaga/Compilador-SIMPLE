@@ -1,5 +1,5 @@
-10 input n
-15 if n <= 0 goto 56
-55 let n = -1
-56 print n
+05 input n
+15 goto 57
+56 let n = n * 2
+57 print n
 65 end

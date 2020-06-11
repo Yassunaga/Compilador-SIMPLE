@@ -11,9 +11,9 @@ import java.util.Map;
  */
 public class Mapas{
 
-    public Map<String, String> mapaVariavelToEnderecoSML;
-    public Map<Integer, String> mapaGotoLinhaSimpleLinhaSML;
-    public Map<String, Integer> mapaOcorrenciasFaltantes; 
+    public Map<String, Integer> mapaVariavelToEnderecoSML;
+    public Map<Integer, Integer> mapaGotoLinhaSimpleLinhaSML;
+    public Map<Integer, Integer> mapaOcorrenciasFaltantes; 
 
     /**
      * Construtor da classe.

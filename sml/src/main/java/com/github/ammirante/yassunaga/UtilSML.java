@@ -1,5 +1,9 @@
 package com.github.ammirante.yassunaga;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 Gabriel Bueno
  * Yassunaga - 1912130023
@@ -35,5 +39,17 @@ public class UtilSML {
             return "0" + indice.toString();
         }
         return indice.toString();
+    }
+
+    /**
+     * Método responsável por ordenar por valor.
+     * @param mapa
+     * @return
+     */
+    public static Map<String, Integer> sortByValue(Map<String, Integer> mapa) {
+        return mapa.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 }

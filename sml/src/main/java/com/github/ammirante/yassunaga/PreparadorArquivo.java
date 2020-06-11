@@ -15,7 +15,7 @@ public class PreparadorArquivo{
     private ContadorInstrucoes contadorInstrucoes;
     private ManipularArquivo manipularArquivo;
     private static final String VARIAVEL = "+0000";
-    private String contadorLinhas = "00";
+    private Integer contadorLinhas = 0;
     
 
     /**
@@ -35,15 +35,12 @@ public class PreparadorArquivo{
         Mapas mapas = new Mapas();
         Integer qtdInstrucoes = contadorInstrucoes.getQtdInstrucoes();
         // Integer qtdLinhasArquivo = qtdInstrucoes + mapas.getQuantidadeVariaveis();
-        
         criarLinhasVazias(qtdInstrucoes);
+        this.contadorLinhas = qtdInstrucoes;
         List<String> listaElementosArquivoSaida = manipularArquivo.lerArquivoSaida();
         List<String> variaveis = ExtrairArgumento.extrairVariaveis(manipularArquivo.getLinhasEntrada());
         variaveis = variaveis.stream().distinct().collect(Collectors.toList());
         
-        // Montando o índice
-        contadorLinhas = UtilSML.montarIndice(qtdInstrucoes + 1);
-
         String variavelSML = null;
         for(String variavel : variaveis){
             if(isConstante(variavel)){
@@ -56,7 +53,7 @@ public class PreparadorArquivo{
             
             // Montando mapa das variáveis chave = variável, valor = linha
             mapas.mapaVariavelToEnderecoSML.put(variavel, contadorLinhas);
-            contadorLinhas = UtilSML.incrementarIndex(contadorLinhas);
+            contadorLinhas++;
         }
 
         manipularArquivo.escreverNoArquivo(listaElementosArquivoSaida);
@@ -71,18 +68,22 @@ public class PreparadorArquivo{
      */
     private String montarConstante(String variavel) {
         String variavelTemp = variavel;
-        if(variavelTemp.contains("-")) {
+        String SINAL; 
+        if(variavel.contains("-")) {
+            SINAL = "-";
             variavelTemp = variavel.replaceAll("-", "");
         }
-        if(variavelTemp.length() == 1) {
-            return "+000" + variavelTemp;
-        } else if(variavelTemp.length() == 2) {
-            return "+00" + variavelTemp;
-        } else if(variavelTemp.length() == 3) {
-            return "+0" + variavelTemp;
+        else{
+            SINAL = "+";
         }
-
-        return "+" + variavelTemp;        
+        if(variavelTemp.length() == 1) {
+            return SINAL + "000" + variavelTemp;
+        } else if(variavelTemp.length() == 2) {
+            return SINAL + "00" + variavelTemp;
+        } else if(variavelTemp.length() == 3) {
+            return SINAL + "0" + variavelTemp;
+        }
+        return SINAL + variavelTemp;        
     }
     
     /**

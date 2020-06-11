@@ -185,8 +185,8 @@ public class ManipularArquivo {
      * @throws IOException
      */
     public void substituirValoresNulos(Mapas mapas, String caminho) throws IOException {
-        for(Map.Entry<String, Integer> mapa : mapas.mapaOcorrenciasFaltantes.entrySet()) {
-            for(Map.Entry<String, Integer> mapa2 : mapas.mapaOcorrenciasFaltantes.entrySet()) {
+        for(Map.Entry<Integer, Integer> mapa : mapas.mapaOcorrenciasFaltantes.entrySet()) {
+            for(Map.Entry<Integer, Integer> mapa2 : mapas.mapaOcorrenciasFaltantes.entrySet()) {
                 /*if(mapa2.getKey() == mapa.getValue()) {
                     try (Stream<String> all_lines = Files.lines(Paths.get(caminho))) {
                         String linha = all_lines.skip(Integer.valueOf(mapa2.getValue())).findFirst().get();
