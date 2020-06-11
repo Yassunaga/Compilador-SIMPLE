@@ -1,6 +1,8 @@
 package com.github.ammirante.yassunaga;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 
@@ -37,7 +39,7 @@ public class ExtrairArgumento {
      * @param linha
      * @return
      */
-    public static Integer extrairNumeroLinha(String linha){
+    public static Integer extrairNumeroLinhaSimple(String linha){
         String array[] = linha.split(" ");
         
         return Integer.parseInt(array[0]);
@@ -93,6 +95,16 @@ public class ExtrairArgumento {
         
         return null;
     }
+   
+    /**
+     * Método responsável por extrair o argumento das funções input e print. Exemplo 10 input x -> Irá retornar x
+     * @param linha
+     * @return
+     */
+    public static String extrairVariaveisInputEPrint(String linha) {
+        String array[] = linha.split(" ");
+        return array[2];
+    }
 
     /**
      * Método responsável por extrair as variáveis do operador. Exemplo 10 let a = b - c -> Irá retornar [a, b, c].
@@ -110,4 +122,33 @@ public class ExtrairArgumento {
 
         return new String[]{array[2], array[4]};
     }
+
+    /**
+     * Método responsável por extrair as variáveis que serão mapeadas.
+     * @param linhaSimple
+     * @return
+     */
+    public static List<String> extrairVariaveis(List<String> linhasEntradaSimple){
+        List<String> variaveis = new ArrayList<>();
+        String operacao = null;
+        for(String linhaSimple : linhasEntradaSimple){
+            operacao = ExtrairArgumento.extrairOperacao(linhaSimple);
+            switch(operacao){
+                case "let":
+                    variaveis.addAll(Arrays.asList(ExtrairArgumento.extrairVariaveisOperador(linhaSimple)));
+                    break;
+                case "input":
+                    variaveis.addAll(Arrays.asList(ExtrairArgumento.extrairVariaveisInputEPrint(linhaSimple)));
+                    break;
+                case "if":
+                    variaveis.addAll(Arrays.asList(ExtrairArgumento.extrairVariaveisRelacional(linhaSimple)));
+                    break;
+                case "print":
+                    variaveis.addAll(Arrays.asList(ExtrairArgumento.extrairVariaveisInputEPrint(linhaSimple)));
+            }
+        }
+
+        return variaveis;
+    }
+
 }

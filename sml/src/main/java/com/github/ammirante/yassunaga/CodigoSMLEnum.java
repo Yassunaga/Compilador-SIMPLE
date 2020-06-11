@@ -21,7 +21,6 @@ public enum CodigoSMLEnum {
     BRANCHZERO(42),
     HALT(43);
 
-
     private Integer codigoSML;
 
     /**
@@ -32,6 +31,10 @@ public enum CodigoSMLEnum {
         this.codigoSML = codigoSML;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Integer getCodigoSML() {
         return this.codigoSML;
     }
