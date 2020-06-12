@@ -39,6 +39,7 @@ public class Transcrever {
      */
     public String funcInput(String variavel, Integer numLinhaSimple) {
         Integer indexEnderecoLocal = indexVariaveis;
+        this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
         if(!isContemEndereco(variavel)){
             preencherMapaEnderecos(variavel, numLinhaSimple);
         } else{
@@ -46,7 +47,7 @@ public class Transcrever {
         }
         this.indexLinhaSML++;
 
-        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.READ.getCodigoSML(), indexEnderecoLocal);
+        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.READ.getCodigoSML(), indexEnderecoLocal, numLinhaSimple);
 
         return linhaSML;
     }
@@ -60,7 +61,6 @@ public class Transcrever {
     public List<String> funcLet(String[] variaveis, String operador, Integer numLinhaSimple){
         inserirSeNaoHouverEndereco(variaveis);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML++;
         if(variaveis.length > 2){
             return let3Variaveis(variaveis, operador, numLinhaSimple);
         }         
@@ -79,7 +79,7 @@ public class Transcrever {
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
         this.indexLinhaSML++;
 
-        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.WRITE.getCodigoSML(), indexEnderecoLocal);
+        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.WRITE.getCodigoSML(), indexEnderecoLocal, numLinhaSimple);
 
         return linhaSML;
     }
@@ -98,7 +98,7 @@ public class Transcrever {
             this.mapas.mapaOcorrenciasFaltantes.put(indexLinhaSML, Integer.valueOf(expressao));
         }
         this.indexLinhaSML++;
-        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCH.getCodigoSML(), linhaGoto);
+        String linhaSML = this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCH.getCodigoSML(), linhaGoto, linhaGoto);
 
         return linhaSML;
     }
@@ -119,43 +119,48 @@ public class Transcrever {
         if(linha == null) {
             this.mapas.mapaOcorrenciasFaltantes.put(indexLinhaSML, linhaGoto);
         }
-        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(6);
         switch(operador){
             case ">":
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, linhaGoto));
+                this.indexLinhaSML += 3;
                 break;
             case "<":
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, linhaGoto));
+                this.indexLinhaSML += 3;
                 break;
             case "==":
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha, linhaGoto));
+                this.indexLinhaSML += 3;
                 break;
             case ">=":
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, linhaGoto));
+                this.indexLinhaSML += 4;
                 break;
             case "<=":
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHZERO.getCodigoSML(), linha, linhaGoto));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, linhaGoto));
+                this.indexLinhaSML += 4;
                 break;
             default:
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA));
-                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelA, numLinhaSimple));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelB, numLinhaSimple));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, numLinhaSimple));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), enderecoVariavelB, numLinhaSimple));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), enderecoVariavelA, numLinhaSimple));
+                lstLinhas.add(this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.BRANCHNEG.getCodigoSML(), linha, numLinhaSimple));
+                this.indexLinhaSML += 6;
                 break;
         }
         
@@ -170,7 +175,7 @@ public class Transcrever {
     public String funcEnd(Integer numLinhaSimple){
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
         this.indexLinhaSML++;
-        return this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.HALT.getCodigoSML(), 0);
+        return this.montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.HALT.getCodigoSML(), 0, numLinhaSimple);
     }
 
     /**
@@ -180,10 +185,10 @@ public class Transcrever {
      * @param endereco
      * @return
      */
-    private String montarLinhaSML(String tipoOperacao, Integer codigoOperacao, Integer endereco) {
+    private String montarLinhaSML(String tipoOperacao, Integer codigoOperacao, Integer endereco, Integer numLinhaSimple) {
         String enderecoTemp;
         if(endereco == null) {
-            enderecoTemp = "null";
+            enderecoTemp = "S" + numLinhaSimple.toString();
         } else {
             enderecoTemp = UtilSML.montarIndice(endereco);
         }
@@ -224,28 +229,31 @@ public class Transcrever {
         Integer variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
         Integer variavelC = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[2]);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(3);
         switch(operador){
             case "-":
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), variavelC));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.SUBTRACT.getCodigoSML(), variavelC, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA, numLinhaSimple));
+                this.indexLinhaSML += 3;
                 break;
             case "+":
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.ADD.getCodigoSML(), variavelC));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.ADD.getCodigoSML(), variavelC, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA, numLinhaSimple));
+                this.indexLinhaSML += 3;
                 break;
             case "*":
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.MULTIPLY.getCodigoSML(), variavelC));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.MULTIPLY.getCodigoSML(), variavelC, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA, numLinhaSimple));
+                this.indexLinhaSML += 3;
                 break;
             default:
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.DIVIDE.getCodigoSML(), variavelC));
-                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.DIVIDE.getCodigoSML(), variavelC, numLinhaSimple));
+                lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA, numLinhaSimple));
+                this.indexLinhaSML += 3;
                 break;
         }
         
@@ -262,11 +270,10 @@ public class Transcrever {
         Integer variavelA = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[0]);
         Integer variavelB = this.mapas.mapaVariavelToEnderecoSML.get(variaveis[1]);
         this.mapas.mapaGotoLinhaSimpleLinhaSML.put(numLinhaSimple, indexLinhaSML);
-        this.indexLinhaSML++;
         List<String> lstLinhas = new ArrayList<>(2);
-        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB));
-        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA));
-
+        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.LOAD.getCodigoSML(), variavelB, numLinhaSimple));
+        lstLinhas.add(montarLinhaSML(OPERACAO_SOMA, CodigoSMLEnum.STORE.getCodigoSML(), variavelA, numLinhaSimple));
+        this.indexLinhaSML += 2;
         return lstLinhas;
     }
 

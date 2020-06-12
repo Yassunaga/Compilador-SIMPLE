@@ -74,9 +74,15 @@ public class ManipularArquivo {
      * Método responsável por appendar várias linhas no arquivo.
      * @param lstLinhas
      */
-    public void escreverNoArquivo(List<String> lstLinhas){
+    public void escreverNoArquivo(List<String> lstLinhas) throws IOException{
         for(String linha : lstLinhas){
-            gravarArq.print(linha);
+            gravarArq.println(linha);
+        }
+
+        try {
+            arquivo.close();
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 
@@ -98,17 +104,6 @@ public class ManipularArquivo {
      */
     public void flushArquivo() {
         gravarArq.flush();
-    }
-
-    /**
-     * Método responsável por fechar o arquivo.
-     */
-    public void fecharArquivo() throws IOException {
-        try {
-            arquivo.close();
-        } catch (IOException e) {
-            throw new IOException(e);
-        }
     }
 
     /**
@@ -199,17 +194,18 @@ public class ManipularArquivo {
      * @param mapaGoto
      * @throws IOException
      */
-    public void substituirValoresNulos(Mapas mapas, String caminho) throws IOException {
+    public List<String> substituirValoresNulos(Mapas mapas, List<String> linhasSaida) throws IOException {
+        String ocorrenciaNull;
         for(Map.Entry<Integer, Integer> mapa : mapas.mapaOcorrenciasFaltantes.entrySet()) {
-            for(Map.Entry<Integer, Integer> mapa2 : mapas.mapaOcorrenciasFaltantes.entrySet()) {
-                /*if(mapa2.getKey() == mapa.getValue()) {
-                    try (Stream<String> all_lines = Files.lines(Paths.get(caminho))) {
-                        String linha = all_lines.skip(Integer.valueOf(mapa2.getValue())).findFirst().get();
-                        linha.split(" ");
-                    }
-                }*/
-            }
+            for(Integer i = 0; i < linhasSaida.size(); i++) {
+                ocorrenciaNull = "S" + mapa.getValue();
+                if(linhasSaida.get(i).contains(ocorrenciaNull)) {
+                    linhasSaida.set(i, linhasSaida.get(i).replaceAll(ocorrenciaNull, mapas.mapaGotoLinhaSimpleLinhaSML.get(mapa.getValue()).toString()));
+                }
+            }            
         }
+
+        return linhasSaida;
     }
     
     /**

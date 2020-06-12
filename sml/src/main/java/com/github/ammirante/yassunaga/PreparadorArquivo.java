@@ -57,10 +57,10 @@ public class PreparadorArquivo{
         for(String variavel : variaveis){
             if(isConstante(variavel)){
                 variavelSML = montarConstante(variavel);
-                linhasPreenchidasArquivo.add(variavelSML + "\n");
+                linhasPreenchidasArquivo.add(variavelSML);
             }
             else {
-                linhasPreenchidasArquivo.add(VARIAVEL + "\n");
+                linhasPreenchidasArquivo.add(VARIAVEL);
             }
             
             // Montando mapa das variáveis chave = variável, valor = linha

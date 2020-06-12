@@ -13,7 +13,7 @@ public class Mapas{
 
     public Map<String, Integer> mapaVariavelToEnderecoSML;
     public Map<Integer, Integer> mapaGotoLinhaSimpleLinhaSML;
-    public Map<Integer, Integer> mapaOcorrenciasFaltantes; 
+    public Map<Integer, Integer> mapaOcorrenciasFaltantes;
 
     /**
      * Construtor da classe.

@@ -10,7 +10,6 @@ import java.io.IOException;
  * Classe responsável por executar o código
  */
 public class ExecutarConversao {
-
     public static void main(String[] args) throws Exception, IOException {
         String SIMPLE_INPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\entrada.txt";
         String SIMPLE_OUTPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\saida.txt";
@@ -68,7 +67,7 @@ public class ExecutarConversao {
                     break;
             }
         }
-        manipulador.fecharArquivo();
-        manipulador.substituirValoresNulos(transcrever.getMapas(), SIMPLE_OUTPUT);
+        linhasSaida = manipulador.substituirValoresNulos(transcrever.getMapas(), linhasSaida);
+        manipulador.escreverNoArquivo(linhasSaida);
     }
 }
