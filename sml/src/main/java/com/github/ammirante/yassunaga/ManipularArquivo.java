@@ -1,6 +1,7 @@
 package com.github.ammirante.yassunaga;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -52,8 +53,21 @@ public class ManipularArquivo {
      * @throws IOException
      */
     private void criarArquivo(String caminhoArquivoEscrita) throws IOException {
+        this.apagarArquivo(caminhoArquivoEscrita);
         arquivo = new FileWriter(caminhoArquivoEscrita, Boolean.TRUE);
-        gravarArq = new PrintWriter(arquivo);
+        gravarArq = new PrintWriter(arquivo);        
+    }
+
+    /**
+     * Método responsável por apagar o arquivo.
+     * @param caminhoArquivoEscrita
+     * @throws IOException
+     */
+    private void apagarArquivo(String caminhoArquivoEscrita) throws IOException {
+        File f = new File(caminhoArquivoEscrita);
+        if(f.exists()){
+            f.delete();
+        }
     }
 
     /**

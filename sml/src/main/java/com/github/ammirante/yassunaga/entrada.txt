@@ -1,10 +1,11 @@
 10 input n
-15 if n < 0 goto 45
-20 let f = 1
-25 if n < 2 goto 50
-30 let f = f * n
-35 let n = n - 1
-40 goto 25
-45 let f = -1
-50 print f
-55 end
+15 if n <= 0 goto 50
+20 let y = 1
+25 print y
+30 let n = n - 1
+35 if n == 0 goto 60
+40 let y = y + 2
+45 goto 25
+50 let y = -1
+55 print y
+60 end
