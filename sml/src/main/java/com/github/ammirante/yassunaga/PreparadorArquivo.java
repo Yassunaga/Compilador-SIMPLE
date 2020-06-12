@@ -1,6 +1,7 @@
 package com.github.ammirante.yassunaga;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class PreparadorArquivo{
     private ManipularArquivo manipularArquivo;
     private static final String VARIAVEL = "+0000";
     private Integer contadorLinhas = 0;
-    
+    private List<String> linhasPreenchidasArquivo = new ArrayList<>();
 
     /**
      * Construtor da classe.
@@ -25,6 +26,18 @@ public class PreparadorArquivo{
     public PreparadorArquivo(ManipularArquivo manipularArquivo){
         this.manipularArquivo = manipularArquivo;
         contadorInstrucoes = new ContadorInstrucoes(manipularArquivo);
+    }
+
+    public List<String> getLinhasPreenchidasArquivo() {
+        return this.linhasPreenchidasArquivo;
+    }
+
+    /**
+     * Método responsável por retornar a instância do manipulador de arquivo.
+     * @return
+     */
+    public ManipularArquivo getManipularArquivo() {
+        return this.manipularArquivo;
     }
 
     /**
@@ -37,7 +50,6 @@ public class PreparadorArquivo{
         // Integer qtdLinhasArquivo = qtdInstrucoes + mapas.getQuantidadeVariaveis();
         criarLinhasVazias(qtdInstrucoes);
         this.contadorLinhas = qtdInstrucoes;
-        List<String> listaElementosArquivoSaida = manipularArquivo.lerArquivoSaida();
         List<String> variaveis = ExtrairArgumento.extrairVariaveis(manipularArquivo.getLinhasEntrada());
         variaveis = variaveis.stream().distinct().collect(Collectors.toList());
         
@@ -45,10 +57,10 @@ public class PreparadorArquivo{
         for(String variavel : variaveis){
             if(isConstante(variavel)){
                 variavelSML = montarConstante(variavel);
-                listaElementosArquivoSaida.add(variavelSML + "\n");
+                linhasPreenchidasArquivo.add(variavelSML + "\n");
             }
             else {
-                listaElementosArquivoSaida.add(VARIAVEL + "\n");
+                linhasPreenchidasArquivo.add(VARIAVEL + "\n");
             }
             
             // Montando mapa das variáveis chave = variável, valor = linha
@@ -56,8 +68,6 @@ public class PreparadorArquivo{
             contadorLinhas++;
         }
 
-        manipularArquivo.escreverNoArquivo(listaElementosArquivoSaida);
-        
         return mapas;
     }
 
@@ -104,9 +114,9 @@ public class PreparadorArquivo{
      * Método responsável por criar linhas vazias.
      * @param qtdLinhas
      */
-    private void criarLinhasVazias(Integer qtdLinhas){
+    private void criarLinhasVazias(Integer qtdLinhas) throws IOException{
         for(int i=0; i<qtdLinhas; i++){
-            manipularArquivo.escreverNoArquivo("");
+            linhasPreenchidasArquivo.add("");
         }
     }
 

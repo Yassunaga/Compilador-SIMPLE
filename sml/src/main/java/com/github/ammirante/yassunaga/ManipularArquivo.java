@@ -29,6 +29,7 @@ public class ManipularArquivo {
     private List<String> listaArquivo = new ArrayList<>();
     private String caminhoArquivoSaida;
     private List<String> lstLinhasEntrada = new ArrayList<>();
+    private List<String> lstLinhasSaida = new ArrayList<>();
 
     /**
      * Construtor da classe.
@@ -60,8 +61,11 @@ public class ManipularArquivo {
      * @param linha
      * @param numeroLinha
      */
-    public void escreverNoArquivo(String linha, Integer numeroLinha) {
+    public void escreverNoArquivo(String linha) {
         gravarArq.println(linha);
+    }
+
+    public void inserirNoMapaDeOcorrencias(Integer numeroLinha){
         this.mapaOcorrencias.put(numeroLinha, this.linhaArquivo);
         incrementarEndereco();
     }
@@ -89,8 +93,11 @@ public class ManipularArquivo {
         }
     }
 
-    public void escreverNoArquivo(String linha){
-        gravarArq.println(linha);
+    /**
+     * Método responsável por dar um flush no arquivo.
+     */
+    public void flushArquivo() {
+        gravarArq.flush();
     }
 
     /**
@@ -139,6 +146,14 @@ public class ManipularArquivo {
     }
 
     /**
+     * Método responsável por retornar as linhas de saída.
+     * @return
+     */
+    public List<String> getLinhasSaida(){
+        return this.lstLinhasSaida;
+    }
+
+    /**
      * Método responsável por let o arquivo de saída.
      * @throws IOException
      */
@@ -153,7 +168,7 @@ public class ManipularArquivo {
         } catch(IOException e) {
             throw new IOException(e);
         }
-
+        this.lstLinhasSaida = listaArquivo;
         return listaArquivo;
     }
 

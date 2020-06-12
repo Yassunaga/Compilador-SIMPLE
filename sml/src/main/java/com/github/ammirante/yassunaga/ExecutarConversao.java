@@ -1,5 +1,6 @@
 package com.github.ammirante.yassunaga;
 
+import java.util.List;
 import java.io.IOException;
 
 /**
@@ -9,6 +10,7 @@ import java.io.IOException;
  * Classe responsável por executar o código
  */
 public class ExecutarConversao {
+
     public static void main(String[] args) throws Exception, IOException {
         String SIMPLE_INPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\entrada.txt";
         String SIMPLE_OUTPUT = "D:\\Faculdade Douglas\\Interpretador-SML\\sml\\src\\main\\java\\com\\github\\ammirante\\yassunaga\\saida.txt";
@@ -21,33 +23,48 @@ public class ExecutarConversao {
         String operacao = null;
         String expressao[];
         Integer numeroLinhaSimple;
+        List<String> linhasSaida = preparadorArquivo.getLinhasPreenchidasArquivo();
+        Integer index = 0;
 
         while (!"end".equals(operacao)) {
             linhaEntrada = manipulador.getLinhaEntrada();
             operacao = ExtrairArgumento.extrairOperacao(linhaEntrada);
             expressao = ExtrairArgumento.extrairExpressao(linhaEntrada);
             numeroLinhaSimple = ExtrairArgumento.extrairNumeroLinhaSimple(linhaEntrada);
+            List<String> lstTmp;
 
             switch (operacao) {
                 case "rem":
                     break;
                 case "input":
-                    manipulador.escreverNoArquivo(transcrever.funcInput(expressao[1], numeroLinhaSimple), numeroLinhaSimple);
+                    linhasSaida.set(index++, transcrever.funcInput(expressao[1], numeroLinhaSimple));
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
                 case "print":
-                    manipulador.escreverNoArquivo(transcrever.funcPrint(expressao[1], numeroLinhaSimple), numeroLinhaSimple);
+                    linhasSaida.set(index++, transcrever.funcPrint(expressao[1], numeroLinhaSimple));
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
                 case "end": 
-                    manipulador.escreverNoArquivo(transcrever.funcEnd(numeroLinhaSimple), numeroLinhaSimple); 
+                    linhasSaida.set(index++, transcrever.funcEnd(numeroLinhaSimple));
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
                 case "goto":
-                    manipulador.escreverNoArquivo(transcrever.funcGoto(expressao[1], numeroLinhaSimple), numeroLinhaSimple);
+                    linhasSaida.set(index++, transcrever.funcGoto(expressao[1], numeroLinhaSimple));
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
                 case "if":
-                    manipulador.escreverNoArquivo(transcrever.funcIfgoto(ExtrairArgumento.extrairVariaveisRelacional(linhaEntrada), ExtrairArgumento.extrairOperadorRelacional(linhaEntrada), ExtrairArgumento.extrairNumeroLinhaGoto(linhaEntrada), numeroLinhaSimple), numeroLinhaSimple); 
+                    lstTmp = transcrever.funcIfgoto(ExtrairArgumento.extrairVariaveisRelacional(linhaEntrada), ExtrairArgumento.extrairOperadorRelacional(linhaEntrada), ExtrairArgumento.extrairNumeroLinhaGoto(linhaEntrada), numeroLinhaSimple);
+                    for(String linha : lstTmp) {
+                        linhasSaida.set(index++, linha);
+                    }
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
                 case "let":
-                    manipulador.escreverNoArquivo(transcrever.funcLet(ExtrairArgumento.extrairVariaveisOperador(linhaEntrada), ExtrairArgumento.extrairOperador(linhaEntrada), numeroLinhaSimple), numeroLinhaSimple); 
+                    lstTmp = transcrever.funcLet(ExtrairArgumento.extrairVariaveisOperador(linhaEntrada), ExtrairArgumento.extrairOperador(linhaEntrada), numeroLinhaSimple);
+                    for(String linha : lstTmp) {
+                        linhasSaida.set(index++, linha);
+                    }
+                    manipulador.inserirNoMapaDeOcorrencias(numeroLinhaSimple);
                     break;
             }
         }

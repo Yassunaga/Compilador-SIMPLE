@@ -2,7 +2,6 @@ package com.github.ammirante.yassunaga;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Desenvolvido por: Douglas Ammirante da Cunha - 1712130040 
@@ -22,8 +21,6 @@ public class Transcrever {
      */
     public Transcrever(Mapas mapas){
         this.mapas = mapas;
-        Map.Entry<String, Integer> mapaVariavel = UtilSML.sortByValue(mapas.mapaVariavelToEnderecoSML).entrySet().stream().findFirst().orElse(null);
-        mapaVariavel.getValue();
      } 
 
     /**
